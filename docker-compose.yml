@@ -1,0 +1,25 @@
+volumes:
+  postgres-data:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=n8n
+      - POSTGRES_PASSWORD=password
+
+  n8n:
+    image: n8nio/n8n:latest
+    volumes:
+      - ./dist:/home/node/.n8n/custom/node_modules/n8n-nodes-openwebui
+    ports:
+      - 8080:8080
+      - 5678:5678
+    environment:
+      DB_POSTGRESDB_HOST: postgres
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_PASSWORD: password
+      N8N_SECURE_COOKIE: false
